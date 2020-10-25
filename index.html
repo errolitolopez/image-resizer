@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer</title>
+
+    <!-- <script src="js/json-formatter.js"></script> -->
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+</head>
+
+<style>
+
+</style>
+
+<body>
+
+    <div class="lds-spinner" id="spin" style="display: none;">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <nav class="navbar navbar-light fixed-top bg-light shadow-sm">
+        <div class="container">
+            <div class="form-group">
+                <a href="https://errolitolopez.github.io/imageresizer/" style="text-decoration: none;">
+                    <h3 class="text-info mt-3">Image <small class="text-muted">Resizer</small></h3>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-5 pt-5 pb-5 bg-info shadow-sm">
+
+        <div class="container text-white">
+
+            <div class="row row-cols-1 mt-3">
+                <div class="col">
+                    <div class="alert alert-success d-none font-italic" role="alert" id="alert">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cols-1">
+                <div class="col-md-4 mt-1">
+                    <label>File</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                aria-describedby="inputGroupFileAddon01" accept="image/*" onchange="openFile(event)">
+                            <label class="custom-file-label" for="inputGroupFile01" id="chooseFileLabel"
+                                style="text-overflow: ellipsis; overflow: hidden;">Choose
+                                file</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mt-1">
+                    <label>Default Size</label>
+                    <select class="form-control" id="imageSizeSelect" onchange="imageSizeSelectChange(event)">
+                    </select>
+                </div>
+
+                <div class="col-md-1 mt-1">
+                    <div class="d-flex justify-content-center">
+                        <p class="h5 mt-4">or</p>
+                    </div>
+                </div>
+
+
+                <div class="col-md-3 mt-1">
+                    <label>Custom size</label>
+                    <div class="row row-cols-1">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="number" class="form-control" id="customHeight" placeholder="" min="1"
+                                    max="3840" onchange="changeCustomSize(event)">
+                                <small class="form-text">Enter Height</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="number" class="form-control" id="customWidth" placeholder="" min="1"
+                                    max="3840" onchange="changeCustomSize(event)">
+                                <small class="form-text">Enter Width</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-auto ml-auto mt-1">
+                    <button type="submit" class="btn btn-primary font-weight-bold" id="processButton"
+                        onclick="processFile()">Process</button>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 mt-3" id="outputRow">
+                <div class="col col">
+                    <div class="d-flex justify-content-center">
+                        <img src="img/1920hd.png" alt="..." class="img-thumbnail" id="output">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 mt-3 d-none" id="output2Row">
+                <div class="col col">
+                    <div class="d-flex justify-content-center">
+                        <img src="" alt="..." class="img-thumbnail" id="output2">
+                    </div>
+                </div>
+
+
+                <div class="col col mt-3">
+                    <div class="d-flex justify-content-center">
+                        <a href="#" download style="text-decoration: none;" id="download"
+                            class="badge badge-primary">Download!</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-auto ml-auto">
+                <p class="text-muted mb-0">© 2020. Image Resizer is a project by Errol Lopez.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-auto ml-auto">
+                <p class="text-muted font-italic">errolitolopez@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    "use strict";
+
+    var options =
+        [
+            {
+                "text": "- Select Default Size -",
+                "value": 0
+            },
+            {
+                "text": "320 x 240",
+                "value": 1
+            },
+            {
+                "text": "480 x 360",
+                "value": 2,
+            },
+            {
+                "text": "640 x 480",
+                "value": 3
+            },
+            {
+                "text": "720 x 480",
+                "value": 4
+            },
+            {
+                "text": "1024 x 576",
+                "value": 5
+            },
+            {
+                "text": "1280 x 720",
+                "value": 6
+            },
+            {
+                "text": "1366 x 768",
+                "value": 7
+            },
+            {
+                "text": "1600 x 900",
+                "value": 8
+            },
+            {
+                "text": "1920 x 1080",
+                "value": 9
+            }
+        ];
+
+    var imageSizeSelect = document.getElementById("imageSizeSelect");
+
+    options.forEach(option =>
+        imageSizeSelect.add(
+            new Option(option.text, option.value)
+        )
+    );
+
+    var imageSizeSelect = document.getElementById("imageSizeSelect").value = 4;
+
+    var changeCustomSize = function (event) {
+        document.getElementById("imageSizeSelect").value = 0;
+    }
+
+    var imageSizeSelectChange = function (event) {
+        document.getElementById("customHeight").value = "";
+        document.getElementById("customWidth").value = "";
+    }
+
+    var openFile = function (event) {
+        var output2Row = document.getElementById("output2Row");
+        var spin = document.getElementById("spin");
+        var alert = document.getElementById("alert");
+        var input = event.target;
+
+        const fileType = input.files[0].type;
+
+        const fileName = input.files[0].name;
+
+        document.getElementById("chooseFileLabel").textContent = escape(fileName);
+
+        output2Row.classList
+            .remove("d-block");
+
+        output2Row
+            .classList
+            .add('d-none');
+
+        const validImageTypes = ["image/gif", "image/jpeg", "image/png"];
+        if (!validImageTypes.includes(fileType)) {
+            alert.classList
+                .add("d-block");
+
+            alert.classList
+                .add("alert-danger");
+
+            alert.textContent = "Invalid file.";
+
+            output.src = "";
+            return;
+        } else {
+            alert.classList
+                .remove("d-block");
+
+            alert.classList
+                .add("d-none");
+        }
+
+
+
+        spin.classList
+            .remove("d-none");
+
+        spin.classList
+            .add("d-block");
+
+        var reader = new FileReader();
+        reader.onload = function () {
+            var dataURL = reader.result;
+            var output = document.getElementById("output");
+            output.src = dataURL;
+
+            spin.classList
+                .remove("d-block");
+
+            spin.classList
+                .add("d-none");
+
+            spin.classList
+        };
+        reader.readAsDataURL(input.files[0]);
+    };
+
+    var processFile = function () {
+
+        var spin = document.getElementById("spin");
+
+        var output = document.getElementById("output");
+
+        var imageSizeSelect = document.getElementById("imageSizeSelect").value;
+
+        var alert = document.getElementById("alert");
+
+        if (output.getAttribute("src") == "") {
+
+            alert.classList
+                .add("d-block");
+
+            alert.classList
+                .add("alert-danger");
+
+            alert.textContent = "Please choose file.";
+            return;
+
+        } else {
+            alert.classList
+                .remove("d-block");
+
+            alert.classList
+                .add("d-none");
+        }
+
+        const customHeight = document.getElementById("customHeight").value;
+        const customWidth = document.getElementById("customWidth").value;
+
+        if (imageSizeSelect == "0" && !(customHeight >= 1 && customWidth >= 1)) {
+            alert.classList
+                .add("d-block");
+
+            alert.classList
+                .add("alert-danger");
+
+            alert.textContent = "Please select default size or custom size.";
+            return;
+
+        } else {
+
+            alert.classList
+                .remove("d-block");
+
+            alert.classList
+                .add("d-none");
+        }
+
+        spin.classList
+            .remove("d-none");
+
+        spin.classList
+            .add("d-block");
+
+        var width = 0;
+        var height = 0;
+
+        switch (imageSizeSelect) {
+            case "1":
+                width = 320;
+                height = 240;
+                break;
+            case "2":
+                width = 480;
+                height = 360;
+                break;
+            case "3":
+                width = 640;
+                height = 480;
+                break;
+            case "4":
+                width = 720;
+                height = 480;
+                break;
+            case "5":
+                width = 1024;
+                height = 576;
+                break;
+            case "6":
+                width = 1280;
+                height = 720;
+                break;
+            case "7":
+                width = 1366;
+                height = 768;
+                break;
+            case "8":
+                width = 1600;
+                height = 900;
+                break;
+            case "9":
+                width = 1920;
+                height = 1080;
+                break;
+            default:
+
+                width = customWidth;
+                height = customHeight;
+                break;
+        }
+
+        var img = new Image();
+
+        img.crossOrigin = 'Anonymous';
+        img.src = output.src;
+
+        var elem = document.createElement("canvas");
+        elem.width = width;
+        elem.height = height;
+        var ctx = elem.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        ctx.canvas.toBlob((blob) => {
+            var file = new File([blob], "resized", {
+                type: "image/jpeg",
+                lastModified: Date.now()
+            });
+
+            spin.classList
+                .remove("d-block");
+
+            spin.classList
+                .add("d-none");
+
+        }, "image/jpeg", 1);
+
+        document.getElementById("output2Row")
+            .classList
+            .remove('d-none');
+
+        document.getElementById("output2Row")
+            .classList
+            .add('d-block');
+
+        var output = document.getElementById("output2");
+        output.src = ctx.canvas.toDataURL();
+        document.getElementById("download").href = output.src;
+        window.scrollTo(0, document.body.scrollHeight);
+
+    }
+</script>
