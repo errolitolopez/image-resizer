@@ -299,6 +299,9 @@
 
         var spin = document.getElementById("spin");
 
+        spin.classList
+            .add("d-block");
+
         var output = document.getElementById("output");
 
         var imageSizeSelect = document.getElementById("imageSizeSelect").value;
@@ -365,9 +368,6 @@
             alert.classList
                 .add("d-none");
         }
-
-        spin.classList
-            .add("d-block");
 
         var width = 0;
         var height = 0;
