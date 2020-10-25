@@ -327,6 +327,26 @@
         const customHeight = document.getElementById("customHeight").value;
         const customWidth = document.getElementById("customWidth").value;
 
+        if (customHeight >= 3840 && customWidth >= 3840) {
+            alert.classList
+                .add("d-block");
+
+            alert.classList
+                .add("alert-danger");
+
+            alert.textContent = "Maximum of 3840 height and width only.";
+            return;
+
+        } else {
+
+            alert.classList
+                .remove("d-block");
+
+            alert.classList
+                .add("d-none");
+        }
+
+
         if (imageSizeSelect == "0" && !(customHeight >= 1 && customWidth >= 1)) {
             alert.classList
                 .add("d-block");
@@ -345,9 +365,6 @@
             alert.classList
                 .add("d-none");
         }
-
-        spin.classList
-            .remove("d-none");
 
         spin.classList
             .add("d-block");
@@ -414,6 +431,7 @@
                 type: "image/jpeg",
                 lastModified: Date.now()
             });
+
 
             spin.classList
                 .remove("d-block");
